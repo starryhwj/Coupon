@@ -1,0 +1,39 @@
+{% extends "extends/base.html" %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+{% block title %}编辑商家优惠券模板{% endblock title %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/bootstrap-datetimepicker.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/jquery-ui.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/jquery-ui.structure.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/jquery-ui.theme.min.css' %}">
+{% endblock css %}
+{% block content %}
+<div class="container">
+    <div class="row row-rl-10 row-tb-20">
+        <div class="page-content col-xs-12 col-sm-8 col-md-8 col-md-offset-2 col-sm-offset-2">
+            <section class="section checkout-area panel prl-30 pt-20 pb-40">
+                <h2 class="h2 mb-20 h-title">编辑商家优惠券模板</h2>
+                <div class="col-md-offset-2 col-md-8">
+                    <form class='form' action="{% url 'coupons:edit_merchant_coupon_template' coupon_template.id %}"
+                          method="post" novalidate="novalidate"
+                          enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {% bootstrap_form form %}
+                        <button class="btn btn-default pull-left" onclick="returnLastPage()">取消</button>
+                        <button type="submit" class="btn btn-primary pull-right">保存</button>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block js %}
+<script type="text/javascript" src="{% static 'js/jquery-ui.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/bootstrap-datetimepicker.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/bootstrap-datetimepicker.zh-CN.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/coupon.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/public.js' %}"></script>
+{% endblock js %}

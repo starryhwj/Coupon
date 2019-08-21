@@ -1,0 +1,165 @@
+{% extends 'extends/base.html' %}
+{% load bootstrap3 %}
+{% load staticfiles %}
+{% block title %}我的优惠券{% endblock title %}
+{% block content %}
+<div class="container">
+    <div class="section coupons-area coupons-area-grid">
+        <header class="panel ptb-15 mb-30">
+            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                <button class="btn btn-primary" data-toggle="modal" data-target="#select_template">新增</button>
+            </div>
+            <div class="col-xs-offset-2 col-sm-offset-2 col-md-offset-2 col-lg-offset-2 col-xs-8 col-sm-8 col-md-8 col-lg-8">
+                <div class="panel">
+                    <form method="get" action="{% url 'coupons:search_my_coupons' %}">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input type="text" name="key" class="form-control" placeholder="请输入关键字"
+                                   value="{{ data.key }}"/>
+                            <span class="input-group-btn">
+                                <button type="submit" class="btn btn-search btn-block">
+                                    <i class="font-16">{% bootstrap_icon "search" %}</i>
+                                </button>
+                            </span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </header>
+        <div class="row row-masnory row-tb-20">
+            {% for coupon in return_coupon_list %}
+            <div class="col-sm-6 col-md-4 col-lg-3">
+                <div class="coupon-single panel t-center">
+                    {% if coupon.is_used %}
+                    <div class="ribbon-wrapper is-hidden-xs-down">
+                        <div class="ribbon">已使用</div>
+                    </div>
+                    {% endif %}
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="text-center p-20">
+                                <img class="store-logo" src="{{ coupon.pic.url }}" alt="">
+                            </div>
+                            {% if coupon.create_user_id == user.id and not coupon.is_used %}
+                            <ul class="deal-actions" style="top: 30px; right: 40px">
+                                <li class="like-deal">
+                                    <span>
+		                                <a href="{% url 'coupons:del_coupon' coupon.id %}">{% bootstrap_icon "remove" %}</a>
+		                            </span>
+                                </li>
+                                <li class="like-deal">
+                                    <span>
+		                                <a href="{% url 'coupons:edit_coupon' coupon.id %}">{% bootstrap_icon "pencil" %}</a>
+		                            </span>
+                                </li>
+                            </ul>
+                            {% endif %}
+                        </div>
+                        <!-- end col -->
+
+                        <div class="col-xs-12">
+                            <div class="panel-body">
+                                <ul class="deal-meta list-inline mb-10">
+                                    <li class="color-muted"><i class="mr-5"></i>{{ coupon.no }}</li>
+                                </ul>
+                                <h4 class="color-green mb-10 t-uppercase">{{ coupon.price }}</h4>
+                                <h5 class="deal-title mb-10">
+                                    <a data-toggle="modal" data-target="#{{ coupon.no }}" href="#">{{ coupon.name }}</a>
+                                </h5>
+                                <p class="mb-15 color-muted mb-20 font-12">
+                                    <i class="mr-10">{% bootstrap_icon "time" %}</i>
+                                    {{ coupon.begin_date | date:'Y-m-d'}} 至 {{ coupon.end_date | date:'Y-m-d'}}</p>
+                                <div class="showcode mb-20 ">
+                                    <button class="show-code btn btn-sm btn-block">Get Coupon Code
+                                    </button>
+                                    <div class="coupon-hide">{{ coupon.password }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end col -->
+                    </div>
+                    <!-- end row -->
+                </div>
+
+                <div class="modal fade get-coupon-area" tabindex="-1" role="dialog" id="{{ coupon.no }}">
+                    <div class="modal-dialog">
+                        <div class="modal-content panel">
+                            <div class="modal-body">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                        aria-hidden="true">&times;</span>
+                                </button>
+                                <div class="row row-v-10">
+                                    <div class="col-md-10 col-md-offset-1">
+                                        <h3 class="mb-20">{{ coupon.name }}</h3>
+                                        <p class="color-mid">{{ coupon.remark }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% if not coupon.is_used %}
+                            <div class="modal-footer footer-info t-center ptb-40 prl-30">
+                                <h4 class="mb-15">优惠券转让</h4>
+                                <p class="color-mid mb-20">转让操作无法取消，请慎重操作</p>
+                                <form method="post" action="{% url 'coupons:transfer_coupon' %}">
+                                    <div class="input-group">
+                                        {% csrf_token %}
+                                        <input type="hidden" value="{{ coupon.id }}" name="coupon_id">
+                                        <input type="text" class="form-control bg-white"
+                                               placeholder="请输入对方账号"
+                                               required="required"
+                                               name="target_name">
+                                        <span class="input-group-btn">
+		        	                        <button class="btn" type="submit">确定</button>
+		    	                        </span>
+                                    </div>
+                                </form>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="panel">
+                    <div class="panel-body">
+                        优惠券空空如也，赶紧去看看吧！
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% if data.has_value %}
+        {% include 'include/paginator.html' %}
+        {% endif %}
+        <div class="modal fade get-coupon-area mt-40" tabindex="-1" role="dialog" id="select_template">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <label class="modal-title">请选择模板</label>
+                    </div>
+                    <div class="modal-body">
+                        <form class='form' action="{% url 'coupons:new_coupon' %}" method="GET" id="template_form">
+                            {% csrf_token %}
+                            <select class="form-control input-sm" id="id_template" name="template">
+                                <option value="-1">空白模板</option>
+                                {% for coupon_template in coupon_template_list %}
+                                <option value="{{ coupon_template.id }}">{{ coupon_template.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-default pull-left" data-dismiss="modal">取消</button>
+                        <button type="submit" class="btn btn-primary pull-right" onclick="new_coupon()">确定</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block js %}
+<script type="text/javascript" src="{% static 'js/coupon-list.js' %}"></script>
+{% endblock js %}

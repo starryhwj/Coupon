@@ -1,0 +1,163 @@
+{% extends 'extends/base.html' %}
+{% load bootstrap3 %}
+{% load staticfiles %}
+{% block title %}主页{% endblock title %}
+{% block content %}
+<div class="container">
+    <div class="section coupons-area coupons-area-grid">
+        <header class="panel ptb-15 mb-30">
+            <div class="col-lg-offset-2 col-lg-8">
+                <div class="panel">
+                    <form class="search-form" method="get" action="{% url 'coupons:search_market' %}" )>
+                        {% csrf_token %}
+                        <div class="header-search">
+                            <div class="input-group">
+                                <input type="text" class="form-control search-input" placeholder="请输入关键字"
+                                       name="key" value="{{ data.key }}">
+                                <div class="input-group-btn">
+                                    <div class="input-group">
+                                        <select class="form-control search-select" id="search-select"
+                                                name="search-select">
+                                            <option>优惠券</option>
+                                            <option {{ select }}>店家</option>
+                                        </select>
+                                        <div class="input-group-btn">
+                                            <button class="btn btn-search btn-block" type="submit">
+                                                <i class="font-16">{% bootstrap_icon "search" %}</i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </header>
+        <div class="row row-masnory row-tb-20">
+            {% if return_coupon_list is NONE %}
+            {% for merchant in return_merchant_list %}
+            <div class="col-xs-12">
+                <div class="coupon-single panel t-center t-sm-left">
+                    <div class="row row-sm-cell row-tb-0 row-rl-0">
+                        <div class="col-sm-5">
+                            <figure class="p-15">
+                                <img class="store-logo" src="{{ merchant.head_pic.url }}" alt="">
+                            </figure>
+                        </div>
+                        <!-- end col -->
+                        <div class="col-sm-7">
+                            <div class="panel-body">
+                                <h2 class="deal-title mb-10">
+                                    <a href="#">{{ merchant.name }}</a>
+                                </h2>
+                                <h5 class="mb-10">
+                                    {{ merchant.remark }}
+                                </h5>
+                                <p class="mb-15 color-muted font-12">{{ merchant.contact  }}</p>
+                            </div>
+                        </div>
+                        <!-- end col -->
+                    </div>
+                    <!-- end row -->
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="panel">
+                    <div class="panel-body">
+                        没有找到相关店家！
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            {% for coupon in return_coupon_list %}
+            <div class="col-sm-6 col-md-4 col-lg-3">
+                <div class="coupon-single panel t-center">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="text-center p-20">
+                                <img class="store-logo" src="{{ coupon.pic.url }}" alt="">
+                            </div>
+                            <!-- end media -->
+                        </div>
+                        <!-- end col -->
+
+                        <div class="col-xs-12">
+                            <div class="panel-body">
+                                <ul class="deal-meta list-inline mb-10">
+                                    <li class="color-muted"><i class="mr-5"></i>{{ coupon.no }}</li>
+                                </ul>
+                                <h4 class="color-green mb-10 t-uppercase">{{ coupon.price }}</h4>
+                                <h5 class="deal-title mb-10">
+                                    <a href="" data-toggle="modal" data-target="#{{ coupon.no }}">{{ coupon.name }}</a>
+                                </h5>
+                                <p class="mb-15 color-muted mb-20 font-12"><i class="mr-10">
+                                    {% bootstrap_icon "time" %}</i>
+                                    {{ coupon.begin_date | date:'Y-m-d'}} 至 {{ coupon.end_date | date:'Y-m-d'}}</p>
+                            </div>
+                        </div>
+                        <!-- end col -->
+                    </div>
+                    <!-- end row -->
+                </div>
+
+                <div class="modal fade get-coupon-area" tabindex="-1" role="dialog" id="{{ coupon.no }}">
+                    <div class="modal-dialog">
+                        <div class="modal-content panel">
+                            <div class="modal-body">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                        aria-hidden="true">&times;</span>
+                                </button>
+                                <div class="row row-v-10">
+                                    <div class="col-md-10 col-md-offset-1">
+                                        <h3 class="mb-20">{{ coupon.name }}</h3>
+                                        <p class="color-mid">{{ coupon.remark }}</p>
+                                    </div>
+                                    <div class="col-md-10 col-md-offset-1">
+                                        <a href="#" class="btn btn-link">Visit Our Store</a>
+                                    </div>
+                                    <div class="col-md-10 col-md-offset-1">
+                                        <h6 class="color-mid t-uppercase">Click below to get your coupon code</h6>
+                                        <a href="#" target="_blank" class="coupon-code">{{ coupon.password }}</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer footer-info t-center ptb-40 prl-30">
+                                <h4 class="mb-15">Subscribe to Mail</h4>
+                                <p class="color-mid mb-20">Get our Daily email newsletter with Special Services,
+                                    Updates,
+                                    Offers and more!</p>
+                                <form method="post" action="#">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control bg-white"
+                                               placeholder="Your Email Address"
+                                               required="required">
+                                        <span class="input-group-btn">
+		        	                        <button class="btn" type="submit">Sign Up</button>
+		    	                        </span>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="panel">
+                    <div class="panel-body">
+                        没有找到相关优惠券！
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+        {% if data.has_value %}
+        {% include 'include/paginator.html' %}
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}

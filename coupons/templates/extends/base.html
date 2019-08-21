@@ -1,0 +1,96 @@
+{% load staticfiles %}
+{% load bootstrap3 %}
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>{% block title %}base{% endblock title %}</title>
+    {% bootstrap_css %}
+    {% block css %}{% endblock css %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+</head>
+<body>
+<div id="pageWrapper" class="page-wrapper">
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#my-nav"
+                        aria-expanded="false">
+                    <span class="sr-only">切换导航条</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Coupons</a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="my-nav">
+                {% if user.is_authenticated %}
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="{% url 'coupons:index' %}">主页</a></li>
+                    <li><a href="{% url 'coupons:my_coupons' %}">我的优惠券</a></li>
+                    <li class="dropdown">
+                        <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                           aria-expanded="false">优惠券模板 <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url 'coupons:personal_coupon_template_list' %}">个人优惠券模板</a></li>
+                            {% if user.is_merchant %}
+                            <li><a href="{% url 'coupons:merchant_coupon_template_list' %}">商家优惠券模板</a></li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                    {% if user.is_merchant %}
+                    <li class="dropdown">
+                        <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                           aria-expanded="false">商家管理 <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url 'coupons:merchant_release_coupon' %}">发布优惠券</a></li>
+                            <li><a href="{% url 'coupons:use_coupon' %}">使用优惠券</a></li>
+                            <li><a href="{% url 'coupons:manage_merchant_coupons' %}">管理优惠券</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                           aria-expanded="false">{{ user.username }} <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url 'coupons:edit_user_data' %}">我的资料</a></li>
+                            {% if user.is_merchant %}
+                            <li><a href="{% url 'coupons:edit_merchant' %}">商家资料</a></li>
+                            {% endif %}
+                            <li><a href="{% url 'coupons:change_password' %}">修改密码</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="{% url 'users:logout' %}">注销</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                {% else %}
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="{% url 'users:login' %}">登录</a></li>
+                    <li><a href="{% url 'users:register' %}">注册</a></li>
+                </ul>
+                {% endif %}
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+
+    <main id="mainContent" class="main-content">
+        <div class="page-container ptb-10">
+            {% block content %}{% endblock content %}
+        </div>
+    </main>
+
+    {% bootstrap_javascript %}
+    {% block js %}{% endblock js %}
+    <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
+</div>
+</body>
+</html>

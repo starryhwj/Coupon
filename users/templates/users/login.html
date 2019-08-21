@@ -1,0 +1,27 @@
+{% extends 'extends/base.html' %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+{% block title %}登录{% endblock title %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock css %}
+{% block content %}
+<div class="container">
+    <div class="row row-rl-10 row-tb-20">
+        <div class="page-content col-xs-12 col-sm-8 col-md-8 col-md-offset-2 col-sm-offset-2">
+            <section class="section checkout-area panel prl-30 pt-20 pb-40">
+                <div class="col-md-offset-2 col-md-8">
+                    <form class='form-login' action="{% url 'users:login' %}" method="post">
+                        {% csrf_token %}
+                        <h2 class="text-center">欢迎登录</h2>
+                        {% bootstrap_form form %}
+                        <button type="reset" class="btn btn-default pull-left">重置</button>
+                        <button type="submit" class="btn btn-primary pull-right">提交</button>
+                        <input type="hidden" name="next" value="{% url 'coupons:index' %}"/>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+{% endblock content %}

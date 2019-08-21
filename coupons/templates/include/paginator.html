@@ -1,0 +1,53 @@
+<div class="page-pagination text-center mt-30 p-10 panel">
+    <nav>
+        <ul class="page-pagination">
+            {% if data.first %}
+            {% if data.key != "" %}
+            <li><a class="page-numbers" href="?page=1&key={{data.key}}">1</a></li>
+            {% else %}
+            <li><a class="page-numbers" href="?page=1">1</a></li>
+            {% endif %}
+            {% endif %}
+
+            {% if data.left %}
+            {% if data.left_has_more %}
+            <li><span>...</span></li>
+            {% endif %}
+            {% for i in data.left %}
+            {% if data.key != "" %}
+            <li><a class="page-numbers" href="?page={{i}}&key={{data.key}}">{{i}}</a></li>
+            {% else %}
+            <li><a class="page-numbers" href="?page={{i}}">{{i}}</a></li>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+
+            {% if data.key != "" %}
+            <li class="current page-numbers"><a href="?page={{data.page}}&key={{data.key}}">{{data.page}}</a></li>
+            {% else %}
+            <li class="current page-numbers"><a href="?page={{data.page}}">{{data.page}}</a></li>
+            {% endif %}
+
+            {% if data.right %}
+            {% for i in data.right %}
+            {% if data.key != "" %}
+            <li><a class="page-numbers" href="?page={{i}}&key={{data.key}}">{{i}}</a></li>
+            {% else %}
+            <li><a class="page-numbers" href="?page={{i}}">{{i}}</a></li>
+            {% endif %}
+            {% endfor %}
+            {% if data.right_has_more %}
+            <li><span class="page-numbers dots">...</span></li>
+            {% endif %}
+            {% endif %}
+
+            {% if data.last %}
+            {% if data.key != "" %}
+            <li><a class="page-numbers" href="?page={{data.total_pages}}&key={{data.key}}">{{data.total_pages}}</a></li>
+            {% else %}
+            <li><a class="page-numbers" href="?page={{data.total_pages}}">{{data.total_pages}}</a></li>
+            {% endif %}
+            {% endif %}
+        </ul>
+    </nav>
+</div>
